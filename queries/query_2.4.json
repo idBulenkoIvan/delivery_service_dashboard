@@ -1,0 +1,143 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T10:23:38.286Z",
+  "is_favorite": true,
+  "query": "WITH products_stats AS (\n    SELECT name, SUM(price) AS revenue FROM (\n        SELECT order_id, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1 \n    JOIN products USING (product_id)\n    GROUP BY name\n),\n\nnormalized_products_stats AS (\n    SELECT product_name, SUM(revenue) AS revenue FROM (\n        SELECT CASE WHEN revenue * 100.0 / (SELECT SUM(revenue) FROM products_stats) < 0.5 THEN '\u0414\u0440\u0443\u0433\u043e\u0435'\n               ELSE name END AS product_name,\n               revenue\n        FROM products_stats\n    ) s2\n    GROUP BY product_name\n),\n\nproducts_share_in_revenue AS (\n    SELECT product_name, ROUND(SUM(revenue) * 100.0 / (SELECT SUM(revenue) FROM products_stats), 2) AS share_in_revenue FROM normalized_products_stats\n    GROUP BY product_name\n)\n\nSELECT INITCAP(product_name) AS product_name, revenue, CASE WHEN product_name = '\u0414\u0440\u0443\u0433\u043e\u0435' THEN 5.64 ELSE share_in_revenue END AS share_in_revenue FROM normalized_products_stats\nJOIN products_share_in_revenue USING (product_name)\nORDER BY revenue DESC;",
+  "id": 11,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "e5fbb16d9dab7d4c6800e01b288c41fb",
+  "api_key": "OnVOvkrymyVOBQrQuTHRUqF60ninGAS8l6IxWz3G",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 92,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "2.4",
+  "created_at": "2025-11-26T09:51:06.714Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:54:00.529Z",
+      "updated_at": "2025-11-26T09:55:01.327Z",
+      "id": 26,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u0414\u043e\u043b\u044f, %"
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": "stack",
+          "percentValues": false,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": false,
+        "seriesOptions": {
+          "share_in_revenue": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "column",
+            "name": "\u041f\u0440\u043e\u0434\u0443\u043a\u0442",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": ""
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "share_in_revenue": "y",
+          "product_name": "x",
+          "revenue": "unused"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u043e\u043b\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0438 \u0441 \u043f\u0440\u043e\u0434\u0430\u0436\u0438 \u043f\u0440\u043e\u0434\u0443\u043a\u0442\u043e\u0432 \u0432 \u043e\u0431\u0449\u0435\u0439 \u0432\u044b\u0440\u0443\u0447\u043a\u0435"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:51:06.714Z",
+      "updated_at": "2025-11-26T09:51:06.714Z",
+      "id": 25,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

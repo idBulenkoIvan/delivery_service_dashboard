@@ -1,0 +1,1380 @@
+{
+  "tags": [],
+  "is_archived": false,
+  "updated_at": "2025-12-04T15:12:38.686Z",
+  "is_favorite": true,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:58:07.453Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:58:01Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "layout": [],
+  "is_draft": false,
+  "id": 3,
+  "can_edit": true,
+  "user_id": 1,
+  "name": "Dashboard - delivery_service (pt. 2)",
+  "created_at": "2025-11-26T09:15:17.063Z",
+  "slug": "dashboard---delivery_service-pt-2-",
+  "version": 2,
+  "widgets": [
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T09:28:37.389Z",
+        "updated_at": "2025-11-26T09:41:18.131Z",
+        "id": 18,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:19:32.072Z",
+          "latest_query_data_id": 89,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:35.007Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "7ac0a1d0ae4ed1913840f57391602005",
+          "is_archived": false,
+          "query": "WITH daily_revenue AS (\n    SELECT date, SUM(price) as revenue FROM (\n        SELECT user_id, DATE(time) AS date, order_id,\n               unnest(product_ids) AS product_id\n        FROM user_actions \n        JOIN orders using (order_id)\n        ) s1 \n        JOIN products using (product_id)\n        WHERE  order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE  action = 'cancel_order')\n        GROUP BY date\n)\n        \nSELECT date,\n       revenue,\n       SUM(revenue) OVER (ORDER BY date ASC) AS total_revenue,\n       ROUND((revenue - lag(revenue, 1) OVER (ORDER BY date ASC)) * 100.0 / lag(revenue, 1) OVER (ORDER BY date ASC), 2) AS revenue_change\nFROM   daily_revenue\nORDER BY date asc;",
+          "api_key": "A6jHxrMZLuKVHP8hnQe6YbGjDHKlPFm1Pe1ToqgC",
+          "is_draft": false,
+          "id": 8,
+          "data_source_id": 4,
+          "name": "2.1"
+        },
+        "type": "CHART",
+        "options": {
+          "showDataLabels": false,
+          "direction": {
+            "type": "counterclockwise"
+          },
+          "missingValuesAsZero": true,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          },
+          "numberFormat": "0,0[.]00000",
+          "yAxis": [
+            {
+              "type": "linear",
+              "title": {
+                "text": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431."
+              }
+            },
+            {
+              "opposite": true,
+              "type": "linear",
+              "title": {
+                "text": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442, %"
+              }
+            }
+          ],
+          "series": {
+            "stacking": null,
+            "error_y": {
+              "visible": true,
+              "type": "data"
+            }
+          },
+          "globalSeriesType": "column",
+          "percentFormat": "0[.]00%",
+          "sortX": true,
+          "seriesOptions": {
+            "revenue_change": {
+              "zIndex": 1,
+              "index": 0,
+              "type": "column",
+              "name": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442 \u0432\u044b\u0440\u0443\u0447\u043a\u0438",
+              "yAxis": 0
+            },
+            "revenue": {
+              "zIndex": 0,
+              "index": 0,
+              "type": "line",
+              "name": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430",
+              "yAxis": 1
+            }
+          },
+          "valuesOptions": {},
+          "xAxis": {
+            "labels": {
+              "enabled": true
+            },
+            "type": "-",
+            "title": {
+              "text": "\u0414\u0430\u0442\u0430"
+            }
+          },
+          "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+          "columnMapping": {
+            "date": "x",
+            "revenue_change": "y",
+            "revenue": "y"
+          },
+          "textFormat": "",
+          "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+          "legend": {
+            "enabled": true
+          }
+        },
+        "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u043e\u0439 \u0432\u044b\u0440\u0443\u0447\u043a\u0438 "
+      },
+      "text": "",
+      "created_at": "2025-11-26T09:41:18.131Z",
+      "updated_at": "2025-11-26T09:42:29.667Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 4,
+          "sizeY": 13,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 5,
+          "minSizeX": 1,
+          "col": 2,
+          "row": 0
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 9
+    },
+    {
+      "text": " ",
+      "created_at": "2025-11-26T10:09:09.080Z",
+      "updated_at": "2025-12-04T15:20:12.033Z",
+      "options": {
+        "position": {
+          "autoHeight": false,
+          "sizeX": 6,
+          "sizeY": 2,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 13
+        },
+        "isHidden": false,
+        "parameterMappings": {}
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 17
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T09:41:06.003Z",
+        "updated_at": "2025-11-26T09:41:27.668Z",
+        "id": 23,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:19:32.072Z",
+          "latest_query_data_id": 89,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:35.007Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "7ac0a1d0ae4ed1913840f57391602005",
+          "is_archived": false,
+          "query": "WITH daily_revenue AS (\n    SELECT date, SUM(price) as revenue FROM (\n        SELECT user_id, DATE(time) AS date, order_id,\n               unnest(product_ids) AS product_id\n        FROM user_actions \n        JOIN orders using (order_id)\n        ) s1 \n        JOIN products using (product_id)\n        WHERE  order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE  action = 'cancel_order')\n        GROUP BY date\n)\n        \nSELECT date,\n       revenue,\n       SUM(revenue) OVER (ORDER BY date ASC) AS total_revenue,\n       ROUND((revenue - lag(revenue, 1) OVER (ORDER BY date ASC)) * 100.0 / lag(revenue, 1) OVER (ORDER BY date ASC), 2) AS revenue_change\nFROM   daily_revenue\nORDER BY date asc;",
+          "api_key": "A6jHxrMZLuKVHP8hnQe6YbGjDHKlPFm1Pe1ToqgC",
+          "is_draft": false,
+          "id": 8,
+          "data_source_id": 4,
+          "name": "2.1"
+        },
+        "type": "COUNTER",
+        "options": {
+          "tooltipFormat": "0,0.000",
+          "targetColName": "",
+          "formatTargetValue": false,
+          "rowNumber": -1,
+          "stringDecChar": ".",
+          "stringSuffix": "",
+          "stringDecimal": 0,
+          "counterColName": "total_revenue",
+          "counterLabel": "\u041e\u0431\u0449\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431",
+          "stringThouSep": " ",
+          "targetRowNumber": null
+        },
+        "name": "\u041e\u0431\u0449\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430 "
+      },
+      "text": "",
+      "created_at": "2025-11-26T09:41:27.668Z",
+      "updated_at": "2025-11-26T09:42:29.668Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 5,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 0
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 10
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T10:13:44.900Z",
+        "updated_at": "2025-11-26T10:16:00.273Z",
+        "id": 32,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T10:12:26.412Z",
+          "latest_query_data_id": 94,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:40.511Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "07eb44a9e0561edd89b19be65d497d55",
+          "is_archived": false,
+          "query": "WITH daily_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        GROUP BY user_id\n    ) s1\n    GROUP BY date\n),\n\ndaily_active_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n        GROUP BY user_id\n    ) s2\n    GROUP BY date\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS daily_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) \n    ) s3\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\ndaily_finished_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS daily_finished_orders FROM user_actions\n    WHERE order_id NOT IN ( \n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY date\n)\n\nSELECT date, ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_users) OVER (ORDER BY date), 2) AS running_arpu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_active_users) OVER (ORDER BY date), 2) AS running_arppu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_finished_orders) OVER (ORDER BY date), 2) AS running_aov       \nFROM daily_users\n    JOIN daily_revenue USING (date)\n    JOIN daily_active_users USING (date)\n    JOIN daily_finished_orders USING (date)\nORDER BY date ASC;",
+          "api_key": "JlwqQwvoFN6UxDWxtFIdIm2eZ5iX0XPINeU8QBKQ",
+          "is_draft": false,
+          "id": 13,
+          "data_source_id": 4,
+          "name": "2.6"
+        },
+        "type": "COUNTER",
+        "options": {
+          "tooltipFormat": "0,0.000",
+          "rowNumber": -1,
+          "stringDecChar": ".",
+          "stringDecimal": 0,
+          "countRow": false,
+          "counterColName": "running_arpu",
+          "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f APRU, \u0440\u0443\u0431.",
+          "stringThouSep": " ",
+          "targetRowNumber": 1
+        },
+        "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPU"
+      },
+      "text": "",
+      "created_at": "2025-11-26T10:16:00.273Z",
+      "updated_at": "2025-12-04T15:20:12.061Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 5,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 35
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 20
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T10:14:53.175Z",
+        "updated_at": "2025-11-26T10:16:07.261Z",
+        "id": 34,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T10:12:26.412Z",
+          "latest_query_data_id": 94,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:40.511Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "07eb44a9e0561edd89b19be65d497d55",
+          "is_archived": false,
+          "query": "WITH daily_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        GROUP BY user_id\n    ) s1\n    GROUP BY date\n),\n\ndaily_active_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n        GROUP BY user_id\n    ) s2\n    GROUP BY date\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS daily_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) \n    ) s3\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\ndaily_finished_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS daily_finished_orders FROM user_actions\n    WHERE order_id NOT IN ( \n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY date\n)\n\nSELECT date, ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_users) OVER (ORDER BY date), 2) AS running_arpu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_active_users) OVER (ORDER BY date), 2) AS running_arppu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_finished_orders) OVER (ORDER BY date), 2) AS running_aov       \nFROM daily_users\n    JOIN daily_revenue USING (date)\n    JOIN daily_active_users USING (date)\n    JOIN daily_finished_orders USING (date)\nORDER BY date ASC;",
+          "api_key": "JlwqQwvoFN6UxDWxtFIdIm2eZ5iX0XPINeU8QBKQ",
+          "is_draft": false,
+          "id": 13,
+          "data_source_id": 4,
+          "name": "2.6"
+        },
+        "type": "COUNTER",
+        "options": {
+          "tooltipFormat": "0,0.000",
+          "rowNumber": -1,
+          "stringDecChar": ".",
+          "stringDecimal": 0,
+          "counterColName": "running_aov",
+          "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f AOV, \u0440\u0443\u0431. ",
+          "stringThouSep": " ",
+          "targetRowNumber": 1
+        },
+        "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f AOV"
+      },
+      "text": "",
+      "created_at": "2025-11-26T10:16:07.261Z",
+      "updated_at": "2025-12-04T15:20:12.064Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 5,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 40
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 21
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T09:46:10.251Z",
+        "updated_at": "2025-11-27T16:45:24.565Z",
+        "id": 24,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:35:55.392Z",
+          "latest_query_data_id": 90,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:37.004Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "b8bc31edd09ad661ee0836cc68ee3ab4",
+          "is_archived": false,
+          "query": "WITH users_first_actions AS (\n    SELECT user_id, MIN(DATE(time)) AS date FROM user_actions\n    WHERE order_id NOT IN (\n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY user_id\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\nnew_users_revenue AS (\n    SELECT date, SUM(price) AS new_users_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        LEFT JOIN user_actions USING (order_id)\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) AND (user_id, DATE(creation_time)) IN (\n            SELECT user_id, date FROM users_first_actions\n        )\n    ) s2\n    JOIN products USING (product_id)\n    GROUP BY date\n)\n\nSELECT daily_revenue.date, revenue, new_users_revenue,\n       ROUND(new_users_revenue * 100.0 / revenue, 2) AS new_users_revenue_share,\n       100.0 - ROUND(new_users_revenue * 100.0 / revenue, 2) AS old_users_revenue_share\nFROM daily_revenue\n    JOIN new_users_revenue USING (date)\nORDER BY date ASC;",
+          "api_key": "ICBb6E0hYNxvmYDy9eJpCoQfvcGr1q8LTkVdTcaK",
+          "is_draft": false,
+          "id": 10,
+          "data_source_id": 4,
+          "name": "2.3"
+        },
+        "type": "CHART",
+        "options": {
+          "showDataLabels": false,
+          "direction": {
+            "type": "counterclockwise"
+          },
+          "missingValuesAsZero": true,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          },
+          "numberFormat": "0,0[.]00000",
+          "yAxis": [
+            {
+              "type": "linear",
+              "title": {
+                "text": "\u0414\u043e\u043b\u044f, %"
+              }
+            },
+            {
+              "type": "linear",
+              "opposite": true
+            }
+          ],
+          "series": {
+            "stacking": "stack",
+            "error_y": {
+              "visible": true,
+              "type": "data"
+            }
+          },
+          "globalSeriesType": "column",
+          "percentFormat": "0[.]00%",
+          "sortX": true,
+          "seriesOptions": {
+            "old_users_revenue_share": {
+              "zIndex": 1,
+              "index": 0,
+              "type": "column",
+              "name": "\u0421\u0442\u0430\u0440\u044b\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+              "yAxis": 0
+            },
+            "new_users_revenue_share": {
+              "zIndex": 0,
+              "index": 0,
+              "type": "column",
+              "name": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+              "yAxis": 0
+            }
+          },
+          "valuesOptions": {},
+          "xAxis": {
+            "labels": {
+              "enabled": true
+            },
+            "type": "-",
+            "title": {
+              "text": "\u0414\u0430\u0442\u0430"
+            }
+          },
+          "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+          "columnMapping": {
+            "date": "x",
+            "old_users_revenue_share": "y",
+            "new_users_revenue_share": "y"
+          },
+          "textFormat": "",
+          "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+          "legend": {
+            "enabled": true
+          }
+        },
+        "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0434\u043e\u043b\u0438 \u043d\u043e\u0432\u044b\u0445 \u0438 \u0441\u0442\u0430\u0440\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0432 \u0432\u0430\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438 \u0437\u0430 \u0434\u0435\u043d\u044c"
+      },
+      "text": "",
+      "created_at": "2025-11-26T09:46:28.242Z",
+      "updated_at": "2025-12-04T15:20:11.998Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 8,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 5,
+          "minSizeX": 1,
+          "col": 4,
+          "row": 20
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 12
+    },
+    {
+      "text": " ",
+      "created_at": "2025-11-26T10:09:44.471Z",
+      "updated_at": "2025-12-04T15:20:12.054Z",
+      "options": {
+        "position": {
+          "autoHeight": false,
+          "sizeX": 6,
+          "sizeY": 2,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 28
+        },
+        "isHidden": false,
+        "parameterMappings": {}
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 18
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T10:07:41.400Z",
+        "updated_at": "2025-11-26T10:07:52.730Z",
+        "id": 30,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:56:52.802Z",
+          "latest_query_data_id": 95,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:39.256Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "e21dba47d50dee1a66f1ba8fc11105f1",
+          "is_archived": false,
+          "query": "WITH low_tax AS (\n    SELECT * FROM (VALUES ('\u0441\u0430\u0445\u0430\u0440'), ('\u0441\u0443\u0445\u0430\u0440\u0438\u043a\u0438'), ('\u0441\u0443\u0448\u043a\u0438'), ('\u0441\u0435\u043c\u0435\u0447\u043a\u0438'), ('\u043c\u0430\u0441\u043b\u043e \u043b\u044c\u043d\u044f\u043d\u043e\u0435'), ('\u0432\u0438\u043d\u043e\u0433\u0440\u0430\u0434'), ('\u043c\u0430\u0441\u043b\u043e \u043e\u043b\u0438\u0432\u043a\u043e\u0432\u043e\u0435'), ('\u0430\u0440\u0431\u0443\u0437'), ('\u0431\u0430\u0442\u043e\u043d'), ('\u0439\u043e\u0433\u0443\u0440\u0442'), ('\u0441\u043b\u0438\u0432\u043a\u0438'), ('\u0433\u0440\u0435\u0447\u043a\u0430'), ('\u043e\u0432\u0441\u044f\u043d\u043a\u0430'), ('\u043c\u0430\u043a\u0430\u0440\u043e\u043d\u044b'), ('\u0431\u0430\u0440\u0430\u043d\u0438\u043d\u0430'), ('\u0430\u043f\u0435\u043b\u044c\u0441\u0438\u043d\u044b'), ('\u0431\u0443\u0431\u043b\u0438\u043a\u0438'), ('\u0445\u043b\u0435\u0431'), ('\u0433\u043e\u0440\u043e\u0445'), ('\u0441\u043c\u0435\u0442\u0430\u043d\u0430'), ('\u0440\u044b\u0431\u0430 \u043a\u043e\u043f\u0447\u0435\u043d\u0430\u044f'), ('\u043c\u0443\u043a\u0430'), ('\u0448\u043f\u0440\u043e\u0442\u044b'), ('\u0441\u043e\u0441\u0438\u0441\u043a\u0438'), ('\u0441\u0432\u0438\u043d\u0438\u043d\u0430'), ('\u0440\u0438\u0441'), ('\u043c\u0430\u0441\u043b\u043e \u043a\u0443\u043d\u0436\u0443\u0442\u043d\u043e\u0435'), ('\u0441\u0433\u0443\u0449\u0435\u043d\u043a\u0430'), ('\u0430\u043d\u0430\u043d\u0430\u0441'), ('\u0433\u043e\u0432\u044f\u0434\u0438\u043d\u0430'), ('\u0441\u043e\u043b\u044c'), ('\u0440\u044b\u0431\u0430 \u0432\u044f\u043b\u0435\u043d\u0430\u044f'), ('\u043c\u0430\u0441\u043b\u043e \u043f\u043e\u0434\u0441\u043e\u043b\u043d\u0435\u0447\u043d\u043e\u0435'), ('\u044f\u0431\u043b\u043e\u043a\u0438'), ('\u0433\u0440\u0443\u0448\u0438'), ('\u043b\u0435\u043f\u0435\u0448\u043a\u0430'), ('\u043c\u043e\u043b\u043e\u043a\u043e'), ('\u043a\u0443\u0440\u0438\u0446\u0430'), ('\u043b\u0430\u0432\u0430\u0448'), ('\u0432\u0430\u0444\u043b\u0438'), ('\u043c\u0430\u043d\u0434\u0430\u0440\u0438\u043d\u044b')\n    ) AS t(product_name)\n),\n\nproducts_stats AS (\n    SELECT DATE(creation_time) AS date, SUM(price) AS revenue, SUM(CASE WHEN name IN (SELECT product_name FROM low_tax) THEN ROUND(price * 10 / 110, 2)\n                                                                   ELSE ROUND(price * 20 / 120, 2) END) AS tax\n    FROM (\n        SELECT creation_time, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\nassembly_costs AS (\n    SELECT date, SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 140 * finished_orders  ELSE 115 * finished_orders END) AS costs FROM (\n        SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS finished_orders FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) AND action = 'create_order'\n        GROUP BY date\n    ) s2\n    GROUP BY date\n),\n\ncosts_stats AS (\n    SELECT date, CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 120000 ELSE 150000 END + deliver_costs + bonus_costs AS costs \n    FROM (\n        SELECT date, SUM(finished_orders * 150) AS deliver_costs,\n               SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN flag * 400 ELSE flag * 500 END) AS bonus_costs\n        FROM (\n            SELECT date(time) AS date, courier_id, COUNT(DISTINCT order_id) AS finished_orders, CASE WHEN COUNT(DISTINCT order_id) >= 5 THEN 1 ELSE 0 END AS flag FROM courier_actions\n            WHERE order_id NOT IN (\n                SELECT order_id FROM user_actions\n                WHERE action = 'cancel_order'\n            ) AND action = 'deliver_order'\n            GROUP BY date, courier_id\n        ) s3\n        GROUP BY date\n    ) s4\n),\n\ntotal_costs AS (\n    SELECT cs.date, ROUND(cs.costs + ac.costs, 2) AS costs FROM costs_stats cs\n    JOIN assembly_costs ac USING (date)\n    ORDER BY date \n)\n\nSELECT date, revenue, costs, tax, revenue - (costs + tax) AS gross_profit,\n       SUM(revenue) OVER (ORDER BY date) AS total_revenue,\n       SUM(costs) OVER (ORDER BY date) AS total_costs,\n       SUM(tax) OVER (ORDER BY date) AS total_tax,\n       SUM(revenue - (costs + tax)) OVER (ORDER BY date) AS total_gross_profit,\n       ROUND((revenue - (costs + tax)) * 100.0 / revenue, 2) AS gross_profit_ratio,\n       ROUND(SUM(revenue - (costs + tax)) OVER (ORDER BY date) * 100.0 / SUM(revenue) OVER (ORDER BY date), 2) AS total_gross_profit_ratio\nFROM products_stats\n    JOIN total_costs USING (date)",
+          "api_key": "1RgjLcuEALT5DQ1PmzoTXOg86VT2rTw4kGIQ8yNH",
+          "is_draft": false,
+          "id": 12,
+          "data_source_id": 4,
+          "name": "2.5"
+        },
+        "type": "COUNTER",
+        "options": {
+          "tooltipFormat": "0,0.000",
+          "rowNumber": -1,
+          "stringDecChar": ".",
+          "stringDecimal": 0,
+          "counterColName": "total_gross_profit",
+          "counterLabel": "\u041e\u0431\u0449\u0430\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u044c, \u0440\u0443\u0431",
+          "stringThouSep": " ",
+          "targetRowNumber": 0
+        },
+        "name": "\u041e\u0431\u0449\u0430\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u044c"
+      },
+      "text": "",
+      "created_at": "2025-11-26T10:07:52.730Z",
+      "updated_at": "2025-12-04T15:20:12.018Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 5,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 4,
+          "row": 15
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 16
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T10:05:53.017Z",
+        "updated_at": "2025-11-26T10:06:28.337Z",
+        "id": 29,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:56:52.802Z",
+          "latest_query_data_id": 95,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:39.256Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "e21dba47d50dee1a66f1ba8fc11105f1",
+          "is_archived": false,
+          "query": "WITH low_tax AS (\n    SELECT * FROM (VALUES ('\u0441\u0430\u0445\u0430\u0440'), ('\u0441\u0443\u0445\u0430\u0440\u0438\u043a\u0438'), ('\u0441\u0443\u0448\u043a\u0438'), ('\u0441\u0435\u043c\u0435\u0447\u043a\u0438'), ('\u043c\u0430\u0441\u043b\u043e \u043b\u044c\u043d\u044f\u043d\u043e\u0435'), ('\u0432\u0438\u043d\u043e\u0433\u0440\u0430\u0434'), ('\u043c\u0430\u0441\u043b\u043e \u043e\u043b\u0438\u0432\u043a\u043e\u0432\u043e\u0435'), ('\u0430\u0440\u0431\u0443\u0437'), ('\u0431\u0430\u0442\u043e\u043d'), ('\u0439\u043e\u0433\u0443\u0440\u0442'), ('\u0441\u043b\u0438\u0432\u043a\u0438'), ('\u0433\u0440\u0435\u0447\u043a\u0430'), ('\u043e\u0432\u0441\u044f\u043d\u043a\u0430'), ('\u043c\u0430\u043a\u0430\u0440\u043e\u043d\u044b'), ('\u0431\u0430\u0440\u0430\u043d\u0438\u043d\u0430'), ('\u0430\u043f\u0435\u043b\u044c\u0441\u0438\u043d\u044b'), ('\u0431\u0443\u0431\u043b\u0438\u043a\u0438'), ('\u0445\u043b\u0435\u0431'), ('\u0433\u043e\u0440\u043e\u0445'), ('\u0441\u043c\u0435\u0442\u0430\u043d\u0430'), ('\u0440\u044b\u0431\u0430 \u043a\u043e\u043f\u0447\u0435\u043d\u0430\u044f'), ('\u043c\u0443\u043a\u0430'), ('\u0448\u043f\u0440\u043e\u0442\u044b'), ('\u0441\u043e\u0441\u0438\u0441\u043a\u0438'), ('\u0441\u0432\u0438\u043d\u0438\u043d\u0430'), ('\u0440\u0438\u0441'), ('\u043c\u0430\u0441\u043b\u043e \u043a\u0443\u043d\u0436\u0443\u0442\u043d\u043e\u0435'), ('\u0441\u0433\u0443\u0449\u0435\u043d\u043a\u0430'), ('\u0430\u043d\u0430\u043d\u0430\u0441'), ('\u0433\u043e\u0432\u044f\u0434\u0438\u043d\u0430'), ('\u0441\u043e\u043b\u044c'), ('\u0440\u044b\u0431\u0430 \u0432\u044f\u043b\u0435\u043d\u0430\u044f'), ('\u043c\u0430\u0441\u043b\u043e \u043f\u043e\u0434\u0441\u043e\u043b\u043d\u0435\u0447\u043d\u043e\u0435'), ('\u044f\u0431\u043b\u043e\u043a\u0438'), ('\u0433\u0440\u0443\u0448\u0438'), ('\u043b\u0435\u043f\u0435\u0448\u043a\u0430'), ('\u043c\u043e\u043b\u043e\u043a\u043e'), ('\u043a\u0443\u0440\u0438\u0446\u0430'), ('\u043b\u0430\u0432\u0430\u0448'), ('\u0432\u0430\u0444\u043b\u0438'), ('\u043c\u0430\u043d\u0434\u0430\u0440\u0438\u043d\u044b')\n    ) AS t(product_name)\n),\n\nproducts_stats AS (\n    SELECT DATE(creation_time) AS date, SUM(price) AS revenue, SUM(CASE WHEN name IN (SELECT product_name FROM low_tax) THEN ROUND(price * 10 / 110, 2)\n                                                                   ELSE ROUND(price * 20 / 120, 2) END) AS tax\n    FROM (\n        SELECT creation_time, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\nassembly_costs AS (\n    SELECT date, SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 140 * finished_orders  ELSE 115 * finished_orders END) AS costs FROM (\n        SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS finished_orders FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) AND action = 'create_order'\n        GROUP BY date\n    ) s2\n    GROUP BY date\n),\n\ncosts_stats AS (\n    SELECT date, CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 120000 ELSE 150000 END + deliver_costs + bonus_costs AS costs \n    FROM (\n        SELECT date, SUM(finished_orders * 150) AS deliver_costs,\n               SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN flag * 400 ELSE flag * 500 END) AS bonus_costs\n        FROM (\n            SELECT date(time) AS date, courier_id, COUNT(DISTINCT order_id) AS finished_orders, CASE WHEN COUNT(DISTINCT order_id) >= 5 THEN 1 ELSE 0 END AS flag FROM courier_actions\n            WHERE order_id NOT IN (\n                SELECT order_id FROM user_actions\n                WHERE action = 'cancel_order'\n            ) AND action = 'deliver_order'\n            GROUP BY date, courier_id\n        ) s3\n        GROUP BY date\n    ) s4\n),\n\ntotal_costs AS (\n    SELECT cs.date, ROUND(cs.costs + ac.costs, 2) AS costs FROM costs_stats cs\n    JOIN assembly_costs ac USING (date)\n    ORDER BY date \n)\n\nSELECT date, revenue, costs, tax, revenue - (costs + tax) AS gross_profit,\n       SUM(revenue) OVER (ORDER BY date) AS total_revenue,\n       SUM(costs) OVER (ORDER BY date) AS total_costs,\n       SUM(tax) OVER (ORDER BY date) AS total_tax,\n       SUM(revenue - (costs + tax)) OVER (ORDER BY date) AS total_gross_profit,\n       ROUND((revenue - (costs + tax)) * 100.0 / revenue, 2) AS gross_profit_ratio,\n       ROUND(SUM(revenue - (costs + tax)) OVER (ORDER BY date) * 100.0 / SUM(revenue) OVER (ORDER BY date), 2) AS total_gross_profit_ratio\nFROM products_stats\n    JOIN total_costs USING (date)",
+          "api_key": "1RgjLcuEALT5DQ1PmzoTXOg86VT2rTw4kGIQ8yNH",
+          "is_draft": false,
+          "id": 12,
+          "data_source_id": 4,
+          "name": "2.5"
+        },
+        "type": "CHART",
+        "options": {
+          "showDataLabels": false,
+          "direction": {
+            "type": "counterclockwise"
+          },
+          "missingValuesAsZero": true,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          },
+          "numberFormat": "0,0[.]00000",
+          "yAxis": [
+            {
+              "type": "linear",
+              "title": {
+                "text": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c, \u0440\u0443\u0431."
+              }
+            },
+            {
+              "rangeMax": 333,
+              "type": "linear",
+              "opposite": true,
+              "title": {
+                "text": "\u0414\u043e\u043b\u044f, %"
+              }
+            }
+          ],
+          "series": {
+            "stacking": null,
+            "error_y": {
+              "visible": true,
+              "type": "data"
+            }
+          },
+          "globalSeriesType": "column",
+          "percentFormat": "0[.]00%",
+          "sortX": true,
+          "seriesOptions": {
+            "gross_profit": {
+              "zIndex": 0,
+              "index": 0,
+              "type": "line",
+              "name": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c",
+              "yAxis": 0
+            },
+            "gross_profit_ratio": {
+              "zIndex": 1,
+              "index": 0,
+              "type": "column",
+              "name": "\u0414\u043e\u043b\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u0438",
+              "yAxis": 1
+            }
+          },
+          "valuesOptions": {},
+          "xAxis": {
+            "labels": {
+              "enabled": true
+            },
+            "type": "-",
+            "title": {
+              "text": "\u0414\u0430\u0442\u0430"
+            }
+          },
+          "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+          "columnMapping": {
+            "date": "x",
+            "gross_profit": "y",
+            "gross_profit_ratio": "y"
+          },
+          "textFormat": "",
+          "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+          "legend": {
+            "enabled": true
+          }
+        },
+        "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0432\u0430\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438 \u043d\u0430 \u0434\u0435\u043d\u044c"
+      },
+      "text": "",
+      "created_at": "2025-11-26T10:06:28.337Z",
+      "updated_at": "2025-12-04T15:20:12.017Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 4,
+          "sizeY": 13,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 5,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 15
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 15
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T10:14:15.869Z",
+        "updated_at": "2025-11-26T10:15:48.618Z",
+        "id": 33,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T10:12:26.412Z",
+          "latest_query_data_id": 94,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:40.511Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "07eb44a9e0561edd89b19be65d497d55",
+          "is_archived": false,
+          "query": "WITH daily_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        GROUP BY user_id\n    ) s1\n    GROUP BY date\n),\n\ndaily_active_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n        GROUP BY user_id\n    ) s2\n    GROUP BY date\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS daily_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) \n    ) s3\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\ndaily_finished_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS daily_finished_orders FROM user_actions\n    WHERE order_id NOT IN ( \n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY date\n)\n\nSELECT date, ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_users) OVER (ORDER BY date), 2) AS running_arpu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_active_users) OVER (ORDER BY date), 2) AS running_arppu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_finished_orders) OVER (ORDER BY date), 2) AS running_aov       \nFROM daily_users\n    JOIN daily_revenue USING (date)\n    JOIN daily_active_users USING (date)\n    JOIN daily_finished_orders USING (date)\nORDER BY date ASC;",
+          "api_key": "JlwqQwvoFN6UxDWxtFIdIm2eZ5iX0XPINeU8QBKQ",
+          "is_draft": false,
+          "id": 13,
+          "data_source_id": 4,
+          "name": "2.6"
+        },
+        "type": "COUNTER",
+        "options": {
+          "tooltipFormat": "0,0.000",
+          "rowNumber": -1,
+          "stringDecChar": ".",
+          "stringDecimal": 0,
+          "counterColName": "running_arppu",
+          "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPPU, \u0440\u0443\u0431. ",
+          "stringThouSep": " ",
+          "targetRowNumber": 1
+        },
+        "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPPU"
+      },
+      "text": "",
+      "created_at": "2025-11-26T10:15:48.618Z",
+      "updated_at": "2025-12-04T15:20:12.055Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 5,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 1,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 30
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 19
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T09:34:45.809Z",
+        "updated_at": "2025-11-26T09:42:13.456Z",
+        "id": 20,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:31:52.885Z",
+          "latest_query_data_id": 91,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:35.698Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "0814f18eea342df4abb395652b6a363f",
+          "is_archived": false,
+          "query": "WITH daily_revenue AS (\n    SELECT date, SUM(price) AS daily_revenue FROM (\n        SELECT DATE(time) AS date, order_id, UNNEST(product_ids) AS product_id FROM user_actions\n        JOIN orders USING (order_id)\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1 \n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\ndaily_active_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_users FROM user_actions \n    GROUP BY DATE(time)\n),\n\ndaily_active_paying_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_paying_users FROM user_actions\n    WHERE order_id NOT IN (\n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY DATE(time) \n),\n\ndaily_finished_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS daily_finished_orders FROM user_actions\n    WHERE order_id NOT IN (\n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY DATE(time)\n)\n\nSELECT date, ROUND(daily_revenue / daily_active_users, 2) AS arpu,\n       ROUND(daily_revenue / daily_active_paying_users, 2) AS arppu,\n       ROUND(daily_revenue / daily_finished_orders, 2) AS aov\nFROM daily_revenue\n    JOIN daily_active_users USING (date)\n    JOIN daily_finished_orders USING (date)\n    JOIN daily_active_paying_users USING (date)\nORDER BY date ASC;\n       ",
+          "api_key": "iEuT5pZPKeImDkU6henMnxxIFAlAf3FfXFp9LKaP",
+          "is_draft": false,
+          "id": 9,
+          "data_source_id": 4,
+          "name": "2.2"
+        },
+        "type": "CHART",
+        "options": {
+          "showDataLabels": false,
+          "direction": {
+            "type": "counterclockwise"
+          },
+          "missingValuesAsZero": true,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          },
+          "numberFormat": "0,0[.]00000",
+          "yAxis": [
+            {
+              "type": "linear",
+              "title": {
+                "text": "\u0414\u043e\u0445\u043e\u0434, \u0440\u0443\u0431"
+              }
+            },
+            {
+              "type": "linear",
+              "opposite": true
+            }
+          ],
+          "series": {
+            "stacking": null,
+            "error_y": {
+              "visible": true,
+              "type": "data"
+            }
+          },
+          "globalSeriesType": "line",
+          "percentFormat": "0[.]00%",
+          "sortX": true,
+          "seriesOptions": {
+            "arpu": {
+              "zIndex": 1,
+              "index": 0,
+              "type": "line",
+              "name": "ARPU",
+              "yAxis": 0
+            },
+            "aov": {
+              "zIndex": 2,
+              "index": 0,
+              "type": "line",
+              "name": "AOV",
+              "yAxis": 0
+            },
+            "arppu": {
+              "zIndex": 0,
+              "index": 0,
+              "type": "line",
+              "name": "ARPPU",
+              "yAxis": 0
+            }
+          },
+          "valuesOptions": {},
+          "xAxis": {
+            "labels": {
+              "enabled": true
+            },
+            "type": "-",
+            "title": {
+              "text": "\u0414\u0430\u0442\u0430"
+            }
+          },
+          "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+          "columnMapping": {
+            "date": "x",
+            "arpu": "y",
+            "arppu": "y",
+            "aov": "y"
+          },
+          "textFormat": "",
+          "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+          "legend": {
+            "enabled": true
+          }
+        },
+        "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 AOV, ARPU, ARPPU"
+      },
+      "text": "",
+      "created_at": "2025-11-26T09:42:13.456Z",
+      "updated_at": "2025-12-04T15:20:11.983Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 2,
+          "sizeY": 8,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 5,
+          "minSizeX": 1,
+          "col": 0,
+          "row": 5
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 11
+    },
+    {
+      "visualization": {
+        "description": "",
+        "created_at": "2025-11-26T09:54:00.529Z",
+        "updated_at": "2025-11-26T09:55:01.327Z",
+        "id": 26,
+        "query": {
+          "user": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "created_at": "2025-11-26T09:51:06.714Z",
+          "latest_query_data_id": 92,
+          "schedule": null,
+          "description": null,
+          "tags": [],
+          "updated_at": "2025-11-26T10:23:38.286Z",
+          "last_modified_by": {
+            "auth_type": "password",
+            "is_disabled": false,
+            "updated_at": "2025-12-04T15:58:07.453Z",
+            "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+            "is_invitation_pending": false,
+            "groups": [
+              1,
+              2
+            ],
+            "id": 1,
+            "name": "Ivan Bulenko",
+            "created_at": "2025-11-25T16:08:41.487Z",
+            "disabled_at": null,
+            "is_email_verified": true,
+            "active_at": "2025-12-04T15:58:01Z",
+            "email": "bu1enko@yandex.ru"
+          },
+          "options": {
+            "parameters": []
+          },
+          "is_safe": true,
+          "version": 1,
+          "query_hash": "e5fbb16d9dab7d4c6800e01b288c41fb",
+          "is_archived": false,
+          "query": "WITH products_stats AS (\n    SELECT name, SUM(price) AS revenue FROM (\n        SELECT order_id, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1 \n    JOIN products USING (product_id)\n    GROUP BY name\n),\n\nnormalized_products_stats AS (\n    SELECT product_name, SUM(revenue) AS revenue FROM (\n        SELECT CASE WHEN revenue * 100.0 / (SELECT SUM(revenue) FROM products_stats) < 0.5 THEN '\u0414\u0440\u0443\u0433\u043e\u0435'\n               ELSE name END AS product_name,\n               revenue\n        FROM products_stats\n    ) s2\n    GROUP BY product_name\n),\n\nproducts_share_in_revenue AS (\n    SELECT product_name, ROUND(SUM(revenue) * 100.0 / (SELECT SUM(revenue) FROM products_stats), 2) AS share_in_revenue FROM normalized_products_stats\n    GROUP BY product_name\n)\n\nSELECT INITCAP(product_name) AS product_name, revenue, CASE WHEN product_name = '\u0414\u0440\u0443\u0433\u043e\u0435' THEN 5.64 ELSE share_in_revenue END AS share_in_revenue FROM normalized_products_stats\nJOIN products_share_in_revenue USING (product_name)\nORDER BY revenue DESC;",
+          "api_key": "OnVOvkrymyVOBQrQuTHRUqF60ninGAS8l6IxWz3G",
+          "is_draft": false,
+          "id": 11,
+          "data_source_id": 4,
+          "name": "2.4"
+        },
+        "type": "CHART",
+        "options": {
+          "showDataLabels": false,
+          "direction": {
+            "type": "counterclockwise"
+          },
+          "missingValuesAsZero": true,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          },
+          "numberFormat": "0,0[.]00000",
+          "yAxis": [
+            {
+              "type": "linear",
+              "title": {
+                "text": "\u0414\u043e\u043b\u044f, %"
+              }
+            },
+            {
+              "type": "linear",
+              "opposite": true
+            }
+          ],
+          "series": {
+            "stacking": "stack",
+            "percentValues": false,
+            "error_y": {
+              "visible": true,
+              "type": "data"
+            }
+          },
+          "globalSeriesType": "column",
+          "percentFormat": "0[.]00%",
+          "sortX": false,
+          "seriesOptions": {
+            "share_in_revenue": {
+              "zIndex": 0,
+              "index": 0,
+              "type": "column",
+              "name": "\u041f\u0440\u043e\u0434\u0443\u043a\u0442",
+              "yAxis": 0
+            }
+          },
+          "valuesOptions": {},
+          "xAxis": {
+            "labels": {
+              "enabled": true
+            },
+            "type": "-",
+            "title": {
+              "text": ""
+            }
+          },
+          "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+          "columnMapping": {
+            "share_in_revenue": "y",
+            "product_name": "x",
+            "revenue": "unused"
+          },
+          "textFormat": "",
+          "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+          "legend": {
+            "enabled": true
+          }
+        },
+        "name": "\u0414\u043e\u043b\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0438 \u0441 \u043f\u0440\u043e\u0434\u0430\u0436\u0438 \u043f\u0440\u043e\u0434\u0443\u043a\u0442\u043e\u0432 \u0432 \u043e\u0431\u0449\u0435\u0439 \u0432\u044b\u0440\u0443\u0447\u043a\u0435"
+      },
+      "text": "",
+      "created_at": "2025-11-26T09:55:01.327Z",
+      "updated_at": "2025-12-04T15:20:12.015Z",
+      "options": {
+        "parameterMappings": {},
+        "isHidden": false,
+        "position": {
+          "autoHeight": false,
+          "sizeX": 4,
+          "sizeY": 15,
+          "maxSizeY": 1000,
+          "maxSizeX": 6,
+          "minSizeY": 5,
+          "minSizeX": 1,
+          "col": 2,
+          "row": 30
+        }
+      },
+      "dashboard_id": 3,
+      "width": 1,
+      "id": 13
+    }
+  ],
+  "dashboard_filters_enabled": false
+}

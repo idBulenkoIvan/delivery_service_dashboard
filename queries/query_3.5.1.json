@@ -1,0 +1,149 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T11:01:48.765Z",
+  "is_favorite": true,
+  "query": "WITH first_campaign_cac AS (\r\n    SELECT '\u041a\u0430\u043c\u043f\u0430\u043d\u0438\u044f \u2116 1' AS campaign_ads, ROUND(250000.0 / COUNT(DISTINCT user_id), 2) AS cac FROM user_actions\r\n    WHERE order_id NOT IN (\r\n        SELECT order_id FROM user_actions\r\n        WHERE action = 'cancel_order'\r\n    ) AND user_id IN (8631, 8632, 8638, 8643, 8657, 8673, 8706, 8707, 8715, 8723, 8732, 8739, 8741, 8750, 8751, 8752, 8770, 8774, 8788, 8791, 8804, 8810, 8815, 8828, 8830, 8845, 8853, 8859, 8867, 8869, 8876, 8879, 8883, 8896, 8909, 8911, 8933, 8940, 8972, 8976, 8988, 8990, 9002, 9004, 9009, 9019, 9020, 9035, 9036, 9061, 9069, 9071, 9075, 9081, 9085, 9089, 9108, 9113, 9144, 9145, 9146, 9162, 9165, 9167, 9175, 9180, 9182, 9197, 9198, 9210, 9223, 9251, 9257, 9278, 9287, 9291, 9313, 9317, 9321, 9334, 9351, 9391, 9398, 9414, 9420, 9422, 9431, 9450, 9451, 9454, 9472, 9476, 9478, 9491, 9494, 9505, 9512, 9518, 9524, 9526, 9528, 9531, 9535, 9550, 9559, 9561, 9562, 9599, 9603, 9605, 9611, 9612, 9615, 9625, 9633, 9652, 9654, 9655, 9660, 9662, 9667, 9677, 9679, 9689, 9695, 9720, 9726, 9739, 9740, 9762, 9778, 9786, 9794, 9804, 9810, 9813, 9818, 9828, 9831, 9836, 9838, 9845, 9871, 9887, 9891, 9896, 9897, 9916, 9945, 9960, 9963, 9965, 9968, 9971, 9993, 9998, 9999, 10001, 10013, 10016, 10023, 10030, 10051, 10057, 10064, 10082, 10103, 10105, 10122, 10134, 10135)\r\n),\r\n\r\nsecond_campaign_cac AS (\r\n    SELECT '\u041a\u0430\u043c\u043f\u0430\u043d\u0438\u044f \u2116 2' AS campaign_ads, ROUND(250000.0 / COUNT(DISTINCT user_id), 2) AS cac FROM user_actions\r\n    WHERE order_id NOT IN (\r\n        SELECT order_id FROM user_actions\r\n        WHERE action = 'cancel_order'\r\n    ) AND user_id IN (8629, 8630, 8644, 8646, 8650, 8655, 8659, 8660, 8663, 8665, 8670, 8675, 8680, 8681, 8682, 8683, 8694, 8697, 8700, 8704, 8712, 8713, 8719, 8729, 8733, 8742, 8748, 8754, 8771, 8794, 8795, 8798, 8803, 8805, 8806, 8812, 8814, 8825, 8827, 8838, 8849, 8851, 8854, 8855, 8870, 8878, 8882, 8886, 8890, 8893, 8900, 8902, 8913, 8916, 8923, 8929, 8935, 8942, 8943, 8949, 8953, 8955, 8966, 8968, 8971, 8973, 8980, 8995, 8999, 9000, 9007, 9013, 9041, 9042, 9047, 9064, 9068, 9077, 9082, 9083, 9095, 9103, 9109, 9117, 9123, 9127, 9131, 9137, 9140, 9149, 9161, 9179, 9181, 9183, 9185, 9190, 9196, 9203, 9207, 9226, 9227, 9229, 9230, 9231, 9250, 9255, 9259, 9267, 9273, 9281, 9282, 9289, 9292, 9303, 9310, 9312, 9315, 9327, 9333, 9335, 9337, 9343, 9356, 9368, 9370, 9383, 9392, 9404, 9410, 9421, 9428, 9432, 9437, 9468, 9479, 9483, 9485, 9492, 9495, 9497, 9498, 9500, 9510, 9527, 9529, 9530, 9538, 9539, 9545, 9557, 9558, 9560, 9564, 9567, 9570, 9591, 9596, 9598, 9616, 9631, 9634, 9635, 9636, 9658, 9666, 9672, 9684, 9692, 9700, 9704, 9706, 9711, 9719, 9727, 9735, 9741, 9744, 9749, 9752, 9753, 9755, 9757, 9764, 9783, 9784, 9788, 9790, 9808, 9820, 9839, 9841, 9843, 9853, 9855, 9859, 9863, 9877, 9879, 9880, 9882, 9883, 9885, 9901, 9904, 9908, 9910, 9912, 9920, 9929, 9930, 9935, 9939, 9958, 9959, 9961, 9983, 10027, 10033, 10038, 10045, 10047, 10048, 10058, 10059, 10067, 10069, 10073, 10075, 10078, 10079, 10081, 10092, 10106, 10110, 10113, 10131)\r\n),\r\n\r\nfirst_campaign_revenue AS (\r\n    SELECT date, SUM(price) AS daily_revenue FROM (\r\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\r\n        LEFT JOIN user_actions USING (order_id)\r\n        WHERE order_id NOT IN (\r\n            SELECT order_id FROM user_actions\r\n            WHERE action = 'cancel_order'\r\n        ) AND user_id IN (8631, 8632, 8638, 8643, 8657, 8673, 8706, 8707, 8715, 8723, 8732, 8739, 8741, 8750, 8751, 8752, 8770, 8774, 8788, 8791, 8804, 8810, 8815, 8828, 8830, 8845, 8853, 8859, 8867, 8869, 8876, 8879, 8883, 8896, 8909, 8911, 8933, 8940, 8972, 8976, 8988, 8990, 9002, 9004, 9009, 9019, 9020, 9035, 9036, 9061, 9069, 9071, 9075, 9081, 9085, 9089, 9108, 9113, 9144, 9145, 9146, 9162, 9165, 9167, 9175, 9180, 9182, 9197, 9198, 9210, 9223, 9251, 9257, 9278, 9287, 9291, 9313, 9317, 9321, 9334, 9351, 9391, 9398, 9414, 9420, 9422, 9431, 9450, 9451, 9454, 9472, 9476, 9478, 9491, 9494, 9505, 9512, 9518, 9524, 9526, 9528, 9531, 9535, 9550, 9559, 9561, 9562, 9599, 9603, 9605, 9611, 9612, 9615, 9625, 9633, 9652, 9654, 9655, 9660, 9662, 9667, 9677, 9679, 9689, 9695, 9720, 9726, 9739, 9740, 9762, 9778, 9786, 9794, 9804, 9810, 9813, 9818, 9828, 9831, 9836, 9838, 9845, 9871, 9887, 9891, 9896, 9897, 9916, 9945, 9960, 9963, 9965, 9968, 9971, 9993, 9998, 9999, 10001, 10013, 10016, 10023, 10030, 10051, 10057, 10064, 10082, 10103, 10105, 10122, 10134, 10135)\r\n    ) s1\r\n    JOIN products USING (product_id)\r\n    GROUP BY date\r\n),\r\n\r\nfirst_campaign_arppu AS (\r\n    SELECT '\u041a\u0430\u043c\u043f\u0430\u043d\u0438\u044f \u2116 1' AS campaign_ads, \r\n           'Day ' || (ROW_NUMBER() OVER (ORDER BY date) - 1) AS day, \r\n           ROUND(SUM(daily_revenue) OVER (ORDER BY date ASC) * 1.0 / 171, 2) AS cumulative_arppu\r\n    FROM first_campaign_revenue\r\n),\r\n\r\nsecond_campaign_revenue AS (\r\n    SELECT date, SUM(price) AS daily_revenue FROM (\r\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\r\n        LEFT JOIN user_actions USING (order_id)\r\n        WHERE order_id NOT IN (\r\n            SELECT order_id FROM user_actions\r\n            WHERE action = 'cancel_order'\r\n        ) AND user_id IN (8629, 8630, 8644, 8646, 8650, 8655, 8659, 8660, 8663, 8665, 8670, 8675, 8680, 8681, 8682, 8683, 8694, 8697, 8700, 8704, 8712, 8713, 8719, 8729, 8733, 8742, 8748, 8754, 8771, 8794, 8795, 8798, 8803, 8805, 8806, 8812, 8814, 8825, 8827, 8838, 8849, 8851, 8854, 8855, 8870, 8878, 8882, 8886, 8890, 8893, 8900, 8902, 8913, 8916, 8923, 8929, 8935, 8942, 8943, 8949, 8953, 8955, 8966, 8968, 8971, 8973, 8980, 8995, 8999, 9000, 9007, 9013, 9041, 9042, 9047, 9064, 9068, 9077, 9082, 9083, 9095, 9103, 9109, 9117, 9123, 9127, 9131, 9137, 9140, 9149, 9161, 9179, 9181, 9183, 9185, 9190, 9196, 9203, 9207, 9226, 9227, 9229, 9230, 9231, 9250, 9255, 9259, 9267, 9273, 9281, 9282, 9289, 9292, 9303, 9310, 9312, 9315, 9327, 9333, 9335, 9337, 9343, 9356, 9368, 9370, 9383, 9392, 9404, 9410, 9421, 9428, 9432, 9437, 9468, 9479, 9483, 9485, 9492, 9495, 9497, 9498, 9500, 9510, 9527, 9529, 9530, 9538, 9539, 9545, 9557, 9558, 9560, 9564, 9567, 9570, 9591, 9596, 9598, 9616, 9631, 9634, 9635, 9636, 9658, 9666, 9672, 9684, 9692, 9700, 9704, 9706, 9711, 9719, 9727, 9735, 9741, 9744, 9749, 9752, 9753, 9755, 9757, 9764, 9783, 9784, 9788, 9790, 9808, 9820, 9839, 9841, 9843, 9853, 9855, 9859, 9863, 9877, 9879, 9880, 9882, 9883, 9885, 9901, 9904, 9908, 9910, 9912, 9920, 9929, 9930, 9935, 9939, 9958, 9959, 9961, 9983, 10027, 10033, 10038, 10045, 10047, 10048, 10058, 10059, 10067, 10069, 10073, 10075, 10078, 10079, 10081, 10092, 10106, 10110, 10113, 10131)\r\n    ) s2\r\n    JOIN products USING (product_id)\r\n    GROUP BY date\r\n),\r\n \r\nsecond_campaign_arppu AS (\r\n    SELECT '\u041a\u0430\u043c\u043f\u0430\u043d\u0438\u044f \u2116 2' AS campaign_ads, \r\n           'Day ' || (ROW_NUMBER() OVER (ORDER BY date) - 1) AS day, \r\n           ROUND(SUM(daily_revenue) OVER (ORDER BY date ASC) * 1.0 / 234, 2) AS cumulative_arppu\r\n    FROM second_campaign_revenue\r\n )\r\n\r\nSELECT campaign_ads, day, cumulative_arppu, cac FROM first_campaign_arppu\r\n    JOIN first_campaign_cac USING (campaign_ads)\r\n\r\nORDER BY campaign_ads ASC, day ASC;",
+  "id": 18,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "39d623061a452ceea03618528232aecc",
+  "api_key": "ZYxxHwGaU5MANSBL2MgoYep2OxCVZbbjGTTp3zWB",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 112,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "3.5.1",
+  "created_at": "2025-11-26T10:55:58.700Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:55:58.700Z",
+      "updated_at": "2025-11-26T10:55:58.700Z",
+      "id": 46,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:59:07.712Z",
+      "updated_at": "2025-11-26T11:00:41.955Z",
+      "id": 48,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041e\u043a\u0443\u043f\u0430\u0435\u043c\u043e\u0441\u0442\u044c, \u0440\u0443\u0431."
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "area",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "cac": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "line",
+            "name": "CAC",
+            "yAxis": 0
+          },
+          "cumulative_arppu": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "area",
+            "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPPU",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0435\u043d\u044c \u043a\u0430\u043c\u043f\u0430\u043d\u0438\u0438"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "cac": "y",
+          "cumulative_arppu": "y",
+          "day": "x"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u041e\u043a\u0443\u043f\u0430\u0435\u043c\u043e\u0441\u0442\u044c \u0440\u0435\u043a\u043b\u0430\u043c\u043d\u043e\u0439 \u043a\u0430\u043c\u043f\u0430\u043d\u0438\u0438 \u21161"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

@@ -1,0 +1,149 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T10:23:37.004Z",
+  "is_favorite": true,
+  "query": "WITH users_first_actions AS (\n    SELECT user_id, MIN(DATE(time)) AS date FROM user_actions\n    WHERE order_id NOT IN (\n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY user_id\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\nnew_users_revenue AS (\n    SELECT date, SUM(price) AS new_users_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        LEFT JOIN user_actions USING (order_id)\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) AND (user_id, DATE(creation_time)) IN (\n            SELECT user_id, date FROM users_first_actions\n        )\n    ) s2\n    JOIN products USING (product_id)\n    GROUP BY date\n)\n\nSELECT daily_revenue.date, revenue, new_users_revenue,\n       ROUND(new_users_revenue * 100.0 / revenue, 2) AS new_users_revenue_share,\n       100.0 - ROUND(new_users_revenue * 100.0 / revenue, 2) AS old_users_revenue_share\nFROM daily_revenue\n    JOIN new_users_revenue USING (date)\nORDER BY date ASC;",
+  "id": 10,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "b8bc31edd09ad661ee0836cc68ee3ab4",
+  "api_key": "ICBb6E0hYNxvmYDy9eJpCoQfvcGr1q8LTkVdTcaK",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 90,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "2.3",
+  "created_at": "2025-11-26T09:35:55.392Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:35:55.392Z",
+      "updated_at": "2025-11-26T09:35:55.392Z",
+      "id": 22,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:46:10.251Z",
+      "updated_at": "2025-11-27T16:45:24.565Z",
+      "id": 24,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u0414\u043e\u043b\u044f, %"
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": "stack",
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "old_users_revenue_share": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u0421\u0442\u0430\u0440\u044b\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+            "yAxis": 0
+          },
+          "new_users_revenue_share": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "column",
+            "name": "\u041d\u043e\u0432\u044b\u0435 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0438",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "old_users_revenue_share": "y",
+          "new_users_revenue_share": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0434\u043e\u043b\u0438 \u043d\u043e\u0432\u044b\u0445 \u0438 \u0441\u0442\u0430\u0440\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0432 \u0432\u0430\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438 \u0437\u0430 \u0434\u0435\u043d\u044c"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

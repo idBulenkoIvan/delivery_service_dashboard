@@ -1,0 +1,162 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T08:34:53.272Z",
+  "is_favorite": true,
+  "query": "SELECT hour, successful_orders, canceled_orders,\n       ROUND(canceled_orders * 100.0 / orders, 3) AS cancel_rate\nFROM (\n    SELECT DATE_PART('hour', creation_time)::INTEGER AS hour,\n           COUNT(order_id) FILTER (WHERE order_id IN (SELECT order_id FROM courier_actions WHERE action = 'deliver_order')) AS successful_orders,\n           COUNT(order_id) FILTER (WHERE order_id IN (SELECT order_id FROM user_actions WHERE action = 'cancel_order')) AS canceled_orders,\n           COUNT(order_id) AS orders\n    FROM orders\n    GROUP BY hour\n    ) AS subquery\nORDER BY hour;\n       ",
+  "id": 7,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "fb777a86e6a739c6bee878c189ea5661",
+  "api_key": "LkimnGallCmkLIwvaGoZZrEM0Pc5WNuq4f7PlBOC",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 64,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "1.7",
+  "created_at": "2025-11-26T08:32:25.597Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T08:34:52.186Z",
+      "updated_at": "2025-11-26T08:35:00.698Z",
+      "id": 16,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e"
+            }
+          },
+          {
+            "opposite": true,
+            "type": "linear",
+            "rangeMin": 0,
+            "title": {
+              "text": "\u0414\u043e\u043b\u044f, %"
+            }
+          }
+        ],
+        "series": {
+          "stacking": "stack",
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "canceled_orders": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u043d\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432",
+            "yAxis": 0
+          },
+          "cancel_rate": {
+            "zIndex": 2,
+            "index": 0,
+            "type": "line",
+            "name": "\u0414\u043e\u043b\u044f \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u043d\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432",
+            "yAxis": 1
+          },
+          "successful_orders": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "column",
+            "name": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u043d\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0427\u0430\u0441"
+          }
+        },
+        "reverseY": false,
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "canceled_orders": "y",
+          "cancel_rate": "y",
+          "hour": "x",
+          "successful_orders": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0434\u043e\u043b\u0438 \u043e\u0442\u043c\u0435\u043d\u0435\u043d\u043d\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432 (cancel_rate) \u0438 \u0447\u0438\u0441\u043b\u0430 \u0443\u0441\u043f\u0435\u0448\u043d\u044b\u0445/\u043e\u0442\u043c\u0435\u043d\u0435\u043d\u043d\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432 "
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T08:32:25.597Z",
+      "updated_at": "2025-11-26T08:32:25.597Z",
+      "id": 15,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T08:21:49.565Z",
+  "is_favorite": true,
+  "query": "WITH total_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS orders_cnt FROM user_actions\n    WHERE order_id NOT IN (\n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY date\n),\n\nfirst_orders AS (\n    SELECT date, COUNT(user_id) AS first_orders_cnt FROM (\n        SELECT DATE(MIN(time)) AS date, user_id FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n        GROUP BY user_id\n    ) AS subquery\n    GROUP BY date\n),\n\nnew_users_orders AS (\n    SELECT f.date, COALESCE(COUNT(order_id), 0) AS new_users_orders_cnt FROM (\n        SELECT DATE(MIN(time)) AS date, user_id FROM user_actions\n        GROUP BY user_id \n    ) f\n    LEFT JOIN (\n        SELECT DATE(time) AS date, user_id, order_id FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s\n    ON s.date = f.date AND s.user_id = f.user_id\n    GROUP BY f.date\n)\n\nSELECT date, orders_cnt AS orders, first_orders_cnt AS first_orders,\n       new_users_orders_cnt AS new_users_orders,\n       ROUND(first_orders_cnt * 100.0 / orders_cnt, 2) AS first_orders_share,\n       ROUND(new_users_orders_cnt * 100.0 / orders_cnt, 2) AS new_users_orders_share\nFROM total_orders\n    LEFT JOIN first_orders USING (date)\n    LEFT JOIN new_users_orders USING (date)\nORDER BY date;\n",
+  "id": 6,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "4edc77b5dd8dbe23108d9c2fb45e8b3a",
+  "api_key": "qmonQQZvc5A4DwUoSSOIKdk65bbCdScJy6Q6TT8r",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 58,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "1.6",
+  "created_at": "2025-11-26T08:17:51.031Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T08:17:51.031Z",
+      "updated_at": "2025-11-26T08:17:51.031Z",
+      "id": 13,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T08:21:47.818Z",
+      "updated_at": "2025-11-26T08:21:56.937Z",
+      "id": 14,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e"
+            }
+          },
+          {
+            "opposite": true,
+            "type": "linear",
+            "title": {
+              "text": "\u0414\u043e\u043b\u044f, %"
+            }
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "first_orders_share": {
+            "zIndex": 2,
+            "index": 0,
+            "type": "line",
+            "name": "\u0414\u043e\u043b\u044f \u043f\u0435\u0440\u0432\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432",
+            "yAxis": 1
+          },
+          "new_users_orders": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u0427\u0438\u0441\u043b\u043e \u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u043d\u043e\u0432\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+            "yAxis": 0
+          },
+          "orders": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "column",
+            "name": "\u041e\u0431\u0449\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u0437\u0430\u043a\u0430\u0437\u043e\u0432",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "new_users_orders": "y",
+          "first_orders": "unused",
+          "first_orders_share": "y",
+          "orders": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0447\u0438\u0441\u043b\u0430 \u0437\u0430\u043a\u0430\u0437\u043e\u0432, \u0447\u0438\u0441\u043b\u0430 \u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u043d\u043e\u0432\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439, \u0434\u043e\u043b\u0438 \u043f\u0435\u0440\u0432\u044b\u0445 \u0437\u0430\u043a\u0430\u0437\u043e\u0432 \u043e\u0442 \u0438\u0445 \u043e\u0431\u0449\u0435\u0433\u043e \u0447\u0438\u0441\u043b\u0430"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

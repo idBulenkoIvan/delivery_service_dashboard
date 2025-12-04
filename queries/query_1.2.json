@@ -1,0 +1,151 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T07:53:07.963Z",
+  "is_favorite": true,
+  "query": "WITH daily_users AS (\r\n    SELECT date, COUNT(DISTINCT user_id) AS users_cnt FROM (\r\n        SELECT user_id, MIN(DATE(time)) AS date FROM user_actions\r\n        GROUP BY user_id\r\n    ) AS s1\r\n    GROUP BY date\r\n),\r\n\r\ndaily_couriers AS (\r\n    SELECT date, COUNT(DISTINCT courier_id) AS couriers_cnt FROM (\r\n        SELECT courier_id, MIN(DATE(time)) AS date FROM courier_actions\r\n        GROUP BY courier_id\r\n    ) AS s1\r\n    GROUP BY date\r\n),\r\n\r\nactive_users AS (\r\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS active_users_cnt FROM user_actions\r\n    WHERE order_id NOT IN (\r\n        SELECT order_id FROM user_actions\r\n        WHERE action = 'cancel_order'\r\n    )\r\n    GROUP BY date\r\n),\r\n\r\nactive_couriers AS (\r\n    SELECT DATE(time) AS date, COUNT(DISTINCT courier_id) AS active_couriers_cnt FROM courier_actions\r\n    WHERE action = 'accept_order' AND order_id IN (\r\n        SELECT order_id FROM courier_actions\r\n        WHERE action = 'deliver_order'\r\n    ) OR action = 'deliver_order'\r\n    GROUP BY date\r\n)\r\n\r\nSELECT au.date, au.active_users_cnt AS paying_users, ac.active_couriers_cnt AS active_couriers,\r\n       ROUND(au.active_users_cnt * 100.0 / SUM(u.users_cnt) OVER (ORDER BY date), 2) AS paying_users_share,\r\n       ROUND(ac.active_couriers_cnt * 100.0 / SUM(c.couriers_cnt) OVER (ORDER BY date), 2) AS active_couriers_share\r\nFROM active_users au\r\n    JOIN active_couriers ac USING (date)\r\n    JOIN daily_users u USING (date)\r\n    JOIN daily_couriers c USING (date)\r\nORDER BY au.date ASC;",
+  "id": 2,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "395f5e11475b177156d7f901e4eea1f6",
+  "api_key": "D7pz8mhaQlKSE9RIVTzY4vIk9EcyerkTejuqlKFf",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 61,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "1.2",
+  "created_at": "2025-11-25T19:20:47.279Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-25T19:20:47.279Z",
+      "updated_at": "2025-11-25T19:20:47.279Z",
+      "id": 4,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-25T19:23:31.923Z",
+      "updated_at": "2025-11-26T09:47:31.902Z",
+      "id": 5,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e"
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "line",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "paying_users": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "line",
+            "name": "\u0427\u0438\u0441\u043b\u043e \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+            "yAxis": 0
+          },
+          "active_couriers": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "line",
+            "name": "\u0427\u0438\u0441\u043b\u043e \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445 \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "active_couriers_share": "unused",
+          "paying_users": "y",
+          "paying_users_share": "unused",
+          "active_couriers": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0447\u0438\u0441\u043b\u0430 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0438 \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

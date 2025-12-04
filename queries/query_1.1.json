@@ -1,0 +1,234 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T07:48:52.303Z",
+  "is_favorite": true,
+  "query": "WITH user_stats AS (\n    SELECT date, COUNT(user_id) AS new_users FROM (\n        SELECT user_id, DATE(MIN(time)) AS date FROM user_actions\n        GROUP BY user_id\n    ) AS s1\n    GROUP BY date\n    ORDER BY date\n),\n\ncourier_stats AS (\n    SELECT date, COUNT(courier_id) AS new_couriers FROM (\n        SELECT courier_id, DATE(MIN(time)) AS date FROM courier_actions\n        GROUP BY courier_id\n    ) AS s1\n    GROUP BY date\n    ORDER BY date\n)\n\nSELECT date, u.new_users, c.new_couriers,\n       SUM(u.new_users) OVER (ORDER BY date) AS total_users,\n       SUM(c.new_couriers) OVER (ORDER BY date) AS total_couriers\nFROM user_stats u \n    JOIN courier_stats c USING (date)\nORDER BY date ASC;",
+  "id": 1,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "4cb2231fb2b4c31ee6f0cf841a97bff5",
+  "api_key": "06Cq2FjnJ9GnJEeY8R4g1J72Lfv4rBtwTOMFqOPO",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 60,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "1.1",
+  "created_at": "2025-11-25T16:26:03.953Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-25T16:26:03.953Z",
+      "updated_at": "2025-11-25T16:26:03.953Z",
+      "id": 1,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-25T19:09:30.239Z",
+      "updated_at": "2025-11-25T19:31:02.925Z",
+      "id": 2,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e"
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "percentValues": false,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "line",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "new_couriers": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "line",
+            "name": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043d\u043e\u0432\u044b\u0445 \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432",
+            "yAxis": 0
+          },
+          "new_users": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "line",
+            "name": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e \u043d\u043e\u0432\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+            "yAxis": 0
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "reverseY": false,
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "new_couriers": "y",
+          "new_users": "y",
+          "total_users": "unused",
+          "total_couriers": "unused"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0447\u0438\u0441\u043b\u0430 \u043d\u043e\u0432\u044b\u0445 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0438 \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432 "
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-25T19:17:42.940Z",
+      "updated_at": "2025-11-26T07:48:50.567Z",
+      "id": 3,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041a\u043e\u043b\u0438\u0447\u0435\u0441\u0442\u0432\u043e"
+            }
+          },
+          {
+            "type": "linear",
+            "opposite": true
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "line",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "total_users": {
+            "index": 0,
+            "name": "\u041e\u0431\u0449\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439",
+            "yAxis": 0,
+            "color": "#356AFF",
+            "zIndex": 0,
+            "type": "line"
+          },
+          "total_couriers": {
+            "index": 0,
+            "name": "\u041e\u0431\u0449\u0435\u0435 \u0447\u0438\u0441\u043b\u043e \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432",
+            "yAxis": 0,
+            "color": "#E92828",
+            "zIndex": 1,
+            "type": "line"
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "total_users": "y",
+          "total_couriers": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u043e\u0431\u0449\u0435\u0433\u043e \u0447\u0438\u0441\u043b\u0430 \u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u0435\u043b\u0435\u0439 \u0438 \u043a\u0443\u0440\u044c\u0435\u0440\u043e\u0432"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

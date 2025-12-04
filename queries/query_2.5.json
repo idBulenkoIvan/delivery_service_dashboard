@@ -1,0 +1,255 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T10:23:39.256Z",
+  "is_favorite": true,
+  "query": "WITH low_tax AS (\n    SELECT * FROM (VALUES ('\u0441\u0430\u0445\u0430\u0440'), ('\u0441\u0443\u0445\u0430\u0440\u0438\u043a\u0438'), ('\u0441\u0443\u0448\u043a\u0438'), ('\u0441\u0435\u043c\u0435\u0447\u043a\u0438'), ('\u043c\u0430\u0441\u043b\u043e \u043b\u044c\u043d\u044f\u043d\u043e\u0435'), ('\u0432\u0438\u043d\u043e\u0433\u0440\u0430\u0434'), ('\u043c\u0430\u0441\u043b\u043e \u043e\u043b\u0438\u0432\u043a\u043e\u0432\u043e\u0435'), ('\u0430\u0440\u0431\u0443\u0437'), ('\u0431\u0430\u0442\u043e\u043d'), ('\u0439\u043e\u0433\u0443\u0440\u0442'), ('\u0441\u043b\u0438\u0432\u043a\u0438'), ('\u0433\u0440\u0435\u0447\u043a\u0430'), ('\u043e\u0432\u0441\u044f\u043d\u043a\u0430'), ('\u043c\u0430\u043a\u0430\u0440\u043e\u043d\u044b'), ('\u0431\u0430\u0440\u0430\u043d\u0438\u043d\u0430'), ('\u0430\u043f\u0435\u043b\u044c\u0441\u0438\u043d\u044b'), ('\u0431\u0443\u0431\u043b\u0438\u043a\u0438'), ('\u0445\u043b\u0435\u0431'), ('\u0433\u043e\u0440\u043e\u0445'), ('\u0441\u043c\u0435\u0442\u0430\u043d\u0430'), ('\u0440\u044b\u0431\u0430 \u043a\u043e\u043f\u0447\u0435\u043d\u0430\u044f'), ('\u043c\u0443\u043a\u0430'), ('\u0448\u043f\u0440\u043e\u0442\u044b'), ('\u0441\u043e\u0441\u0438\u0441\u043a\u0438'), ('\u0441\u0432\u0438\u043d\u0438\u043d\u0430'), ('\u0440\u0438\u0441'), ('\u043c\u0430\u0441\u043b\u043e \u043a\u0443\u043d\u0436\u0443\u0442\u043d\u043e\u0435'), ('\u0441\u0433\u0443\u0449\u0435\u043d\u043a\u0430'), ('\u0430\u043d\u0430\u043d\u0430\u0441'), ('\u0433\u043e\u0432\u044f\u0434\u0438\u043d\u0430'), ('\u0441\u043e\u043b\u044c'), ('\u0440\u044b\u0431\u0430 \u0432\u044f\u043b\u0435\u043d\u0430\u044f'), ('\u043c\u0430\u0441\u043b\u043e \u043f\u043e\u0434\u0441\u043e\u043b\u043d\u0435\u0447\u043d\u043e\u0435'), ('\u044f\u0431\u043b\u043e\u043a\u0438'), ('\u0433\u0440\u0443\u0448\u0438'), ('\u043b\u0435\u043f\u0435\u0448\u043a\u0430'), ('\u043c\u043e\u043b\u043e\u043a\u043e'), ('\u043a\u0443\u0440\u0438\u0446\u0430'), ('\u043b\u0430\u0432\u0430\u0448'), ('\u0432\u0430\u0444\u043b\u0438'), ('\u043c\u0430\u043d\u0434\u0430\u0440\u0438\u043d\u044b')\n    ) AS t(product_name)\n),\n\nproducts_stats AS (\n    SELECT DATE(creation_time) AS date, SUM(price) AS revenue, SUM(CASE WHEN name IN (SELECT product_name FROM low_tax) THEN ROUND(price * 10 / 110, 2)\n                                                                   ELSE ROUND(price * 20 / 120, 2) END) AS tax\n    FROM (\n        SELECT creation_time, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n    ) s1\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\nassembly_costs AS (\n    SELECT date, SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 140 * finished_orders  ELSE 115 * finished_orders END) AS costs FROM (\n        SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS finished_orders FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) AND action = 'create_order'\n        GROUP BY date\n    ) s2\n    GROUP BY date\n),\n\ncosts_stats AS (\n    SELECT date, CASE WHEN EXTRACT('Month' FROM date) = 8 THEN 120000 ELSE 150000 END + deliver_costs + bonus_costs AS costs \n    FROM (\n        SELECT date, SUM(finished_orders * 150) AS deliver_costs,\n               SUM(CASE WHEN EXTRACT('Month' FROM date) = 8 THEN flag * 400 ELSE flag * 500 END) AS bonus_costs\n        FROM (\n            SELECT date(time) AS date, courier_id, COUNT(DISTINCT order_id) AS finished_orders, CASE WHEN COUNT(DISTINCT order_id) >= 5 THEN 1 ELSE 0 END AS flag FROM courier_actions\n            WHERE order_id NOT IN (\n                SELECT order_id FROM user_actions\n                WHERE action = 'cancel_order'\n            ) AND action = 'deliver_order'\n            GROUP BY date, courier_id\n        ) s3\n        GROUP BY date\n    ) s4\n),\n\ntotal_costs AS (\n    SELECT cs.date, ROUND(cs.costs + ac.costs, 2) AS costs FROM costs_stats cs\n    JOIN assembly_costs ac USING (date)\n    ORDER BY date \n)\n\nSELECT date, revenue, costs, tax, revenue - (costs + tax) AS gross_profit,\n       SUM(revenue) OVER (ORDER BY date) AS total_revenue,\n       SUM(costs) OVER (ORDER BY date) AS total_costs,\n       SUM(tax) OVER (ORDER BY date) AS total_tax,\n       SUM(revenue - (costs + tax)) OVER (ORDER BY date) AS total_gross_profit,\n       ROUND((revenue - (costs + tax)) * 100.0 / revenue, 2) AS gross_profit_ratio,\n       ROUND(SUM(revenue - (costs + tax)) OVER (ORDER BY date) * 100.0 / SUM(revenue) OVER (ORDER BY date), 2) AS total_gross_profit_ratio\nFROM products_stats\n    JOIN total_costs USING (date)",
+  "id": 12,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "e21dba47d50dee1a66f1ba8fc11105f1",
+  "api_key": "1RgjLcuEALT5DQ1PmzoTXOg86VT2rTw4kGIQ8yNH",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 95,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "2.5",
+  "created_at": "2025-11-26T09:56:52.802Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:07:41.400Z",
+      "updated_at": "2025-11-26T10:07:52.730Z",
+      "id": 30,
+      "type": "COUNTER",
+      "options": {
+        "tooltipFormat": "0,0.000",
+        "rowNumber": -1,
+        "stringDecChar": ".",
+        "stringDecimal": 0,
+        "counterColName": "total_gross_profit",
+        "counterLabel": "\u041e\u0431\u0449\u0430\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u044c, \u0440\u0443\u0431",
+        "stringThouSep": " ",
+        "targetRowNumber": 0
+      },
+      "name": "\u041e\u0431\u0449\u0430\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u044c"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:56:52.802Z",
+      "updated_at": "2025-11-26T09:56:52.802Z",
+      "id": 27,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:05:53.017Z",
+      "updated_at": "2025-11-26T10:06:28.337Z",
+      "id": 29,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c, \u0440\u0443\u0431."
+            }
+          },
+          {
+            "rangeMax": 333,
+            "type": "linear",
+            "opposite": true,
+            "title": {
+              "text": "\u0414\u043e\u043b\u044f, %"
+            }
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "gross_profit": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "line",
+            "name": "\u041f\u0440\u0438\u0431\u044b\u043b\u044c",
+            "yAxis": 0
+          },
+          "gross_profit_ratio": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u0414\u043e\u043b\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u0438",
+            "yAxis": 1
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "gross_profit": "y",
+          "gross_profit_ratio": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0432\u0430\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438 \u043d\u0430 \u0434\u0435\u043d\u044c"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:01:29.739Z",
+      "updated_at": "2025-11-26T10:02:21.241Z",
+      "id": 28,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u041f\u0440\u0438\u0431\u044b\u043b, \u0440\u0443\u0431."
+            }
+          },
+          {
+            "rangeMax": 219,
+            "type": "linear",
+            "opposite": true,
+            "title": {
+              "text": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442, %"
+            }
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "line",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "total_gross_profit": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "line",
+            "name": "\u041e\u0431\u0449\u0430\u044f \u043f\u0440\u0438\u0431\u044b\u043b\u044c",
+            "yAxis": 0
+          },
+          "total_gross_profit_ratio": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442 \u043e\u0431\u0449\u0435\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438",
+            "yAxis": 1
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "total_gross_profit": "y",
+          "total_gross_profit_ratio": "y",
+          "gross_profit_ratio": "unused"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0432\u0430\u043b\u043e\u0432\u043e\u0439 \u043f\u0440\u0438\u0431\u044b\u043b\u0438 "
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

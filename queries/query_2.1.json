@@ -1,0 +1,173 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T10:23:35.007Z",
+  "is_favorite": true,
+  "query": "WITH daily_revenue AS (\n    SELECT date, SUM(price) as revenue FROM (\n        SELECT user_id, DATE(time) AS date, order_id,\n               unnest(product_ids) AS product_id\n        FROM user_actions \n        JOIN orders using (order_id)\n        ) s1 \n        JOIN products using (product_id)\n        WHERE  order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE  action = 'cancel_order')\n        GROUP BY date\n)\n        \nSELECT date,\n       revenue,\n       SUM(revenue) OVER (ORDER BY date ASC) AS total_revenue,\n       ROUND((revenue - lag(revenue, 1) OVER (ORDER BY date ASC)) * 100.0 / lag(revenue, 1) OVER (ORDER BY date ASC), 2) AS revenue_change\nFROM   daily_revenue\nORDER BY date asc;",
+  "id": 8,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "7ac0a1d0ae4ed1913840f57391602005",
+  "api_key": "A6jHxrMZLuKVHP8hnQe6YbGjDHKlPFm1Pe1ToqgC",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 89,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "2.1",
+  "created_at": "2025-11-26T09:19:32.072Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:19:32.072Z",
+      "updated_at": "2025-11-26T09:19:32.072Z",
+      "id": 17,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:28:37.389Z",
+      "updated_at": "2025-11-26T09:41:18.131Z",
+      "id": 18,
+      "type": "CHART",
+      "options": {
+        "showDataLabels": false,
+        "direction": {
+          "type": "counterclockwise"
+        },
+        "missingValuesAsZero": true,
+        "error_y": {
+          "visible": true,
+          "type": "data"
+        },
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [
+          {
+            "type": "linear",
+            "title": {
+              "text": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431."
+            }
+          },
+          {
+            "opposite": true,
+            "type": "linear",
+            "title": {
+              "text": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442, %"
+            }
+          }
+        ],
+        "series": {
+          "stacking": null,
+          "error_y": {
+            "visible": true,
+            "type": "data"
+          }
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": true,
+        "seriesOptions": {
+          "revenue_change": {
+            "zIndex": 1,
+            "index": 0,
+            "type": "column",
+            "name": "\u041f\u0440\u0438\u0440\u043e\u0441\u0442 \u0432\u044b\u0440\u0443\u0447\u043a\u0438",
+            "yAxis": 0
+          },
+          "revenue": {
+            "zIndex": 0,
+            "index": 0,
+            "type": "line",
+            "name": "\u0412\u044b\u0440\u0443\u0447\u043a\u0430",
+            "yAxis": 1
+          }
+        },
+        "valuesOptions": {},
+        "xAxis": {
+          "labels": {
+            "enabled": true
+          },
+          "type": "-",
+          "title": {
+            "text": "\u0414\u0430\u0442\u0430"
+          }
+        },
+        "dateTimeFormat": "DD/MM/YY HH:mm:ss",
+        "columnMapping": {
+          "date": "x",
+          "revenue_change": "y",
+          "revenue": "y"
+        },
+        "textFormat": "",
+        "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+        "legend": {
+          "enabled": true
+        }
+      },
+      "name": "\u0414\u0438\u043d\u0430\u043c\u0438\u043a\u0430 \u0435\u0436\u0435\u0434\u043d\u0435\u0432\u043d\u043e\u0439 \u0432\u044b\u0440\u0443\u0447\u043a\u0438 "
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T09:41:06.003Z",
+      "updated_at": "2025-11-26T09:41:27.668Z",
+      "id": 23,
+      "type": "COUNTER",
+      "options": {
+        "tooltipFormat": "0,0.000",
+        "targetColName": "",
+        "formatTargetValue": false,
+        "rowNumber": -1,
+        "stringDecChar": ".",
+        "stringSuffix": "",
+        "stringDecimal": 0,
+        "counterColName": "total_revenue",
+        "counterLabel": "\u041e\u0431\u0449\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430, \u0440\u0443\u0431",
+        "stringThouSep": " ",
+        "targetRowNumber": null
+      },
+      "name": "\u041e\u0431\u0449\u0430\u044f \u0432\u044b\u0440\u0443\u0447\u043a\u0430 "
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}

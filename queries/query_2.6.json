@@ -1,0 +1,125 @@
+{
+  "is_archived": false,
+  "updated_at": "2025-11-26T10:23:40.511Z",
+  "is_favorite": true,
+  "query": "WITH daily_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        GROUP BY user_id\n    ) s1\n    GROUP BY date\n),\n\ndaily_active_users AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT user_id) AS daily_active_users FROM (\n        SELECT user_id, MIN(time) AS time FROM user_actions\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        )\n        GROUP BY user_id\n    ) s2\n    GROUP BY date\n),\n\ndaily_revenue AS (\n    SELECT date, SUM(price) AS daily_revenue FROM (\n        SELECT DATE(creation_time) AS date, UNNEST(product_ids) AS product_id FROM orders\n        WHERE order_id NOT IN (\n            SELECT order_id FROM user_actions\n            WHERE action = 'cancel_order'\n        ) \n    ) s3\n    JOIN products USING (product_id)\n    GROUP BY date\n),\n\ndaily_finished_orders AS (\n    SELECT DATE(time) AS date, COUNT(DISTINCT order_id) AS daily_finished_orders FROM user_actions\n    WHERE order_id NOT IN ( \n        SELECT order_id FROM user_actions\n        WHERE action = 'cancel_order'\n    )\n    GROUP BY date\n)\n\nSELECT date, ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_users) OVER (ORDER BY date), 2) AS running_arpu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_active_users) OVER (ORDER BY date), 2) AS running_arppu,\n       ROUND(SUM(daily_revenue) OVER (ORDER BY date) / SUM(daily_finished_orders) OVER (ORDER BY date), 2) AS running_aov       \nFROM daily_users\n    JOIN daily_revenue USING (date)\n    JOIN daily_active_users USING (date)\n    JOIN daily_finished_orders USING (date)\nORDER BY date ASC;",
+  "id": 13,
+  "description": null,
+  "tags": [],
+  "version": 1,
+  "query_hash": "07eb44a9e0561edd89b19be65d497d55",
+  "api_key": "JlwqQwvoFN6UxDWxtFIdIm2eZ5iX0XPINeU8QBKQ",
+  "data_source_id": 4,
+  "is_safe": true,
+  "latest_query_data_id": 94,
+  "schedule": null,
+  "user": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "is_draft": false,
+  "can_edit": true,
+  "name": "2.6",
+  "created_at": "2025-11-26T10:12:26.412Z",
+  "last_modified_by": {
+    "auth_type": "password",
+    "is_disabled": false,
+    "updated_at": "2025-12-04T15:55:06.544Z",
+    "profile_image_url": "https://www.gravatar.com/avatar/64e237a6226350fc854a84595b62f95c?s=40&d=identicon",
+    "is_invitation_pending": false,
+    "groups": [
+      1,
+      2
+    ],
+    "id": 1,
+    "name": "Ivan Bulenko",
+    "created_at": "2025-11-25T16:08:41.487Z",
+    "disabled_at": null,
+    "is_email_verified": true,
+    "active_at": "2025-12-04T15:54:12Z",
+    "email": "bu1enko@yandex.ru"
+  },
+  "visualizations": [
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:12:26.412Z",
+      "updated_at": "2025-11-26T10:12:26.412Z",
+      "id": 31,
+      "type": "TABLE",
+      "options": {},
+      "name": "Table"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:14:15.869Z",
+      "updated_at": "2025-11-26T10:15:48.618Z",
+      "id": 33,
+      "type": "COUNTER",
+      "options": {
+        "tooltipFormat": "0,0.000",
+        "rowNumber": -1,
+        "stringDecChar": ".",
+        "stringDecimal": 0,
+        "counterColName": "running_arppu",
+        "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPPU, \u0440\u0443\u0431. ",
+        "stringThouSep": " ",
+        "targetRowNumber": 1
+      },
+      "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPPU"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:13:44.900Z",
+      "updated_at": "2025-11-26T10:16:00.273Z",
+      "id": 32,
+      "type": "COUNTER",
+      "options": {
+        "tooltipFormat": "0,0.000",
+        "rowNumber": -1,
+        "stringDecChar": ".",
+        "stringDecimal": 0,
+        "countRow": false,
+        "counterColName": "running_arpu",
+        "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f APRU, \u0440\u0443\u0431.",
+        "stringThouSep": " ",
+        "targetRowNumber": 1
+      },
+      "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f ARPU"
+    },
+    {
+      "description": "",
+      "created_at": "2025-11-26T10:14:53.175Z",
+      "updated_at": "2025-11-26T10:16:07.261Z",
+      "id": 34,
+      "type": "COUNTER",
+      "options": {
+        "tooltipFormat": "0,0.000",
+        "rowNumber": -1,
+        "stringDecChar": ".",
+        "stringDecimal": 0,
+        "counterColName": "running_aov",
+        "counterLabel": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f AOV, \u0440\u0443\u0431. ",
+        "stringThouSep": " ",
+        "targetRowNumber": 1
+      },
+      "name": "\u041d\u0430\u043a\u043e\u043f\u043b\u0435\u043d\u043d\u0430\u044f AOV"
+    }
+  ],
+  "options": {
+    "parameters": []
+  }
+}
